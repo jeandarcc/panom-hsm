@@ -1,5 +1,5 @@
 {
-  "name": "panom-hsm",
+  "name": "@panomapp/hsm",
   "version": "1.0.0",
   "description": "Universal hierarchical app state runtime for route, query, policy, backend, browser, and host-aware navigation.",
   "type": "module",

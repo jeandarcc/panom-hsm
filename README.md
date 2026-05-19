@@ -1,11 +1,11 @@
-# panom-hsm
+# @panomapp/hsm
 
 Universal hierarchical app state runtime for route, query, policy, backend, browser, and host-aware navigation.
 
-`panom-hsm` lets you define a complex web app as a state tree instead of scattering routing, query-state, permissions, layout, async loaders, backend authorization, browser URL sync, and subdomain canonicalization across unrelated systems.
+`@panomapp/hsm` lets you define a complex web app as a state tree instead of scattering routing, query-state, permissions, layout, async loaders, backend authorization, browser URL sync, and subdomain canonicalization across unrelated systems.
 
 ```bash
-npm install panom-hsm
+npm install @panomapp/hsm
 ```
 
 Optional integrations:
@@ -26,12 +26,12 @@ Traditional applications usually split the same decision across many layers:
 - layouts are selected outside the route model
 - subdomain and canonical redirect rules live in separate config
 
-`panom-hsm` uses one hierarchical state model as the application contract. The same model can drive frontend navigation, backend request authorization, URL state projection, host-aware canonical navigation, and policy decisions.
+`@panomapp/hsm` uses one hierarchical state model as the application contract. The same model can drive frontend navigation, backend request authorization, URL state projection, host-aware canonical navigation, and policy decisions.
 
 ## Quick start
 
 ```ts
-import { createHsm, query } from "panom-hsm";
+import { createHsm, query } from "@panomapp/hsm";
 
 const hsm = createHsm({
   id: "app",
@@ -216,7 +216,7 @@ const decision = await hsm.explainPermission("media.delete");
 HSM configs can be compiled into a function-free portable schema. The schema can be shared with backend code while guards/actions/loaders remain environment-specific registry entries.
 
 ```ts
-import { compileSchema, defineHsm } from "panom-hsm/schema";
+import { compileSchema, defineHsm } from "@panomapp/hsm/schema";
 
 const definition = defineHsm({
   id: "app",
@@ -237,7 +237,7 @@ const schema = compileSchema(definition);
 Backend usage:
 
 ```ts
-import { createHsmBackend } from "panom-hsm/backend";
+import { createHsmBackend } from "@panomapp/hsm/backend";
 
 const backend = createHsmBackend({
   schema,
@@ -255,7 +255,7 @@ Frontend policy is UX. Backend policy enforcement is the security boundary.
 ## Browser runtime
 
 ```ts
-import { createHsmBrowserRuntime } from "panom-hsm/browser";
+import { createHsmBrowserRuntime } from "@panomapp/hsm/browser";
 
 const runtime = createHsmBrowserRuntime({
   hsm,
@@ -271,10 +271,10 @@ The browser runtime integrates `pushState`, `replaceState`, `popstate`, query-st
 
 ## Subdomain policy integration
 
-`panom-hsm` integrates with `@panomapp/subdomain-policy` through the browser runtime.
+`@panomapp/hsm` integrates with `@panomapp/subdomain-policy` through the browser runtime.
 
 ```ts
-import { createHostPolicyAdapter, createHsmBrowserRuntime } from "panom-hsm/browser";
+import { createHostPolicyAdapter, createHsmBrowserRuntime } from "@panomapp/hsm/browser";
 
 const hostPolicy = createHostPolicyAdapter({
   rootHostname: "example.com",
@@ -302,14 +302,14 @@ Redirect safety rejects protocol-relative URLs, backslashes, encoded protocol-re
 
 ```ts
 import { createApp } from "vue";
-import { createHsmVue } from "panom-hsm/vue";
+import { createHsmVue } from "@panomapp/hsm/vue";
 
 const app = createApp(App);
 app.use(createHsmVue({ hsm }));
 ```
 
 ```ts
-import { useHsm, useHsmState, useHsmPolicy } from "panom-hsm/vue";
+import { useHsm, useHsmState, useHsmPolicy } from "@panomapp/hsm/vue";
 
 const hsm = useHsm();
 const state = useHsmState();
@@ -332,7 +332,7 @@ Render by state ID:
 ## Devtools runtime
 
 ```ts
-import { createHsmDevtools } from "panom-hsm/devtools";
+import { createHsmDevtools } from "@panomapp/hsm/devtools";
 
 const devtools = createHsmDevtools(hsm, {
   logger: (event) => console.debug(event.type, event.payload)
@@ -350,14 +350,14 @@ The devtools runtime records transition starts, successes, failures, snapshots, 
 ## Exports
 
 ```txt
-panom-hsm
-panom-hsm/core
-panom-hsm/schema
-panom-hsm/backend
-panom-hsm/browser
-panom-hsm/runtime
-panom-hsm/vue
-panom-hsm/devtools
+@panomapp/hsm
+@panomapp/hsm/core
+@panomapp/hsm/schema
+@panomapp/hsm/backend
+@panomapp/hsm/browser
+@panomapp/hsm/runtime
+@panomapp/hsm/vue
+@panomapp/hsm/devtools
 ```
 
 ## Security notes
