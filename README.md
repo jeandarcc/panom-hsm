@@ -4,6 +4,15 @@ Universal hierarchical app state runtime for route, query, policy, backend, brow
 
 `@panomapp/hsm` lets you define a complex web app as a state tree instead of scattering routing, query-state, permissions, layout, async loaders, backend authorization, browser URL sync, and subdomain canonicalization across unrelated systems.
 
+## Docs
+
+For the book-style documentation, start here:
+
+- [docs/README.md](./docs/README.md)
+- [docs/01-introduction.md](./docs/01-introduction.md)
+- [docs/02-state-tree.md](./docs/02-state-tree.md)
+- [docs/03-routing-and-urls.md](./docs/03-routing-and-urls.md)
+
 ```bash
 npm install @panomapp/hsm
 ```
