@@ -54,7 +54,7 @@ export class HsmTestRunner<TContext extends AnyRecord = AnyRecord> {
       const severity = test.severity ?? "high";
 
       for (let index = 0; index < test.steps.length; index += 1) {
-        const step = test.steps[index];
+        const step = test.steps[index]!;
         const backendMethods = this.backendMethodsForSnapshot(testContext.currentSnapshot);
         const result = await this.stepRunner.run(testContext, {
           testName: test.name,
@@ -151,23 +151,28 @@ export class HsmTestRunner<TContext extends AnyRecord = AnyRecord> {
 
     for (const probe of test.security) {
       const start = Date.now();
-      const probeFindings = await probe.run({
+      const probeContext: Record<string, unknown> = {
         hsm: { id: this.options.hsm.id },
-        adapter: this.adapter,
-        schema: this.options.schema,
+        adapter: this.adapter as unknown as HsmRuntimeAdapter<AnyRecord>,
         contextProfiles,
         redirectSafety: {
           validate: (input: string) => this.redirectSafety.validate(input)
         },
         baseUrl: this.options.baseUrl
-      });
+      };
+      if (this.options.schema) probeContext.schema = this.options.schema as unknown as AnyRecord;
 
-      const normalized = probeFindings.map((finding) => ({
-        ...finding,
-        severity: finding.severity ?? probe.defaultSeverity,
-        testName: finding.testName ?? test.name,
-        stateId: finding.stateId ?? snapshot?.stateId
-      }));
+      const probeFindings = await probe.run(probeContext as unknown as import("./types.js").HsmProbeContext<AnyRecord>);
+
+      const normalized = probeFindings.map((finding) => {
+        const base: Record<string, unknown> = {
+          ...finding,
+          severity: finding.severity ?? probe.defaultSeverity,
+          testName: finding.testName ?? test.name
+        };
+        if (finding.stateId ?? snapshot?.stateId) base.stateId = finding.stateId ?? snapshot?.stateId;
+        return base as unknown as import("./types.js").HsmFinding;
+      });
 
       findings.push(...normalized);
       probeResults.push({

@@ -3,6 +3,7 @@ import type { HsmMachine } from "../core/HsmMachine.js";
 import type { HsmSchema } from "../schema/HsmSchema.js";
 import type { HsmSecurityProbe } from "./types.js";
 import { HsmAuditRunner } from "./HsmAuditRunner.js";
+import type { HsmAuditRunnerOptions } from "./HsmAuditRunner.js";
 import { probes } from "./probes/index.js";
 import { inferProtectedStates } from "./HsmAuditDefaults.js";
 import type { HsmAuditReport } from "./HsmAuditReport.js";
@@ -33,6 +34,6 @@ export async function runHsmAudit<TContext extends AnyRecord = AnyRecord>(
     probes: options.probes ?? defaultProbes(),
     baseUrl: options.baseUrl,
     contextProfiles: options.contextProfiles
-  });
+  } as unknown as HsmAuditRunnerOptions<TContext>);
   return runner.run();
 }

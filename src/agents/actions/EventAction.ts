@@ -29,7 +29,7 @@ export class EventAction implements HsmAgentAction {
 
     const beforeState = context.snapshot?.stateId;
     const result = await context.adapter.send(event, {}, { context: context.profile.context });
-    const snapshot = result.snapshot ?? result;
+    const snapshot = (result as any).snapshot ?? null;
     context.setSnapshot(snapshot);
 
     return {
@@ -46,7 +46,7 @@ export class EventAction implements HsmAgentAction {
         actionType: this.category,
         input: { event },
         hsmStateBefore: beforeState,
-        hsmStateAfter: snapshot.stateId
+          hsmStateAfter: snapshot?.stateId
       }
     };
   }

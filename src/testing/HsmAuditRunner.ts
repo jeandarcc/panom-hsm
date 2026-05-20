@@ -42,14 +42,16 @@ export class HsmAuditRunner<TContext extends AnyRecord = AnyRecord> {
 
     for (const probe of this.options.probes) {
       const probeStart = Date.now();
-      const probeFindings = await probe.run({
+      const probeContext: Record<string, unknown> = {
         hsm: { id: this.options.hsm.id },
-        adapter: this.adapter,
-        schema: this.options.schema,
-        contextProfiles: this.contextProfiles,
+        adapter: this.adapter as unknown as HsmRuntimeAdapter<AnyRecord>,
+        contextProfiles: this.contextProfiles as unknown as Readonly<Record<string, AnyRecord>>,
         redirectSafety: { validate: (input: string) => this.redirectSafety.validate(input) },
         baseUrl: this.options.baseUrl
-      });
+      };
+      if (this.options.schema) probeContext.schema = this.options.schema as unknown as AnyRecord;
+
+      const probeFindings = await probe.run(probeContext as unknown as HsmRuntimeAdapter<AnyRecord> extends never ? never : import("./types.js").HsmProbeContext<AnyRecord>);
 
       const normalized = probeFindings.map((finding) => ({
         ...finding,

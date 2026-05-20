@@ -28,7 +28,7 @@ export function buildInspectorOverlay(event: HsmAgentTraceEvent): (() => void) |
     overlay.style.padding = "12px";
     overlay.style.borderRadius = "6px";
     overlay.style.maxWidth = "360px";
-    overlay.textContent = JSON.stringify(${JSON.stringify(data)}, null, 2);
+    overlay.textContent = JSON.stringify(data, null, 2);
     document.body.appendChild(overlay);
   };
 }

@@ -28,10 +28,10 @@ export class PermissionAction implements HsmAgentAction {
     try {
       const beforeState = context.snapshot?.stateId;
       const result = await context.adapter.transition(target.id, { context: context.profile.context });
-      const snapshot = result.snapshot ?? result;
+      const snapshot = (result as any).snapshot ?? null;
       context.setSnapshot(snapshot);
 
-      const permissions = snapshot.policy?.permissions ?? [];
+      const permissions = snapshot?.policy?.permissions ?? [];
       if (context.profile.name === "lowPrivilege" || context.profile.name === "anonymous") {
         const dangerous = permissions.filter((perm: string) => isDangerousPermission(perm));
         if (dangerous.length > 0) {
@@ -63,7 +63,7 @@ export class PermissionAction implements HsmAgentAction {
           actionType: this.category,
           input: { target: target.id },
           hsmStateBefore: beforeState,
-          hsmStateAfter: snapshot.stateId,
+          hsmStateAfter: snapshot?.stateId,
           permissionsAfter: permissions
         }
       };

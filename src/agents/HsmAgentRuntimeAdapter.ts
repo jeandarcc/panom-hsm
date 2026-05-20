@@ -1,13 +1,13 @@
-import type { AnyRecord } from "../core/types.js";
+import type { AnyRecord, HsmSnapshot, HsmTransitionResult } from "../core/types.js";
 import type { HsmMachine } from "../core/HsmMachine.js";
 
 export interface HsmAgentRuntimeAdapter<TContext extends AnyRecord = AnyRecord> {
   readonly hsm: HsmMachine<TContext>;
   readonly hsmId: string;
-  readonly resolveUrl: (url: string, options?: AnyRecord) => Promise<AnyRecord>;
-  readonly transitionUrl: (url: string, options?: AnyRecord) => Promise<AnyRecord>;
-  readonly transition: (stateId: string, options?: AnyRecord) => Promise<AnyRecord>;
-  readonly send: (event: string, payload: unknown, options?: AnyRecord) => Promise<AnyRecord>;
+  readonly resolveUrl: (url: string, options?: AnyRecord) => Promise<HsmSnapshot<TContext>>;
+  readonly transitionUrl: (url: string, options?: AnyRecord) => Promise<HsmTransitionResult<TContext>>;
+  readonly transition: (stateId: string, options?: AnyRecord) => Promise<HsmTransitionResult<TContext>>;
+  readonly send: (event: string, payload: unknown, options?: AnyRecord) => Promise<HsmTransitionResult<TContext>>;
   readonly href: (stateId: string, params?: AnyRecord, options?: AnyRecord) => string;
   readonly syncUrl: (url: string, context: TContext, options?: AnyRecord) => string;
   readonly routes: () => readonly AnyRecord[];

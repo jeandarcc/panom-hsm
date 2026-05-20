@@ -32,6 +32,7 @@ export function defineHsmAgentSuite<TContext extends AnyRecord = AnyRecord>(
   const profiles = config.agents.profiles && config.agents.profiles.length > 0
     ? config.agents.profiles
     : [agentProfiles.anonymous()];
+  const profilesTyped = profiles as unknown as readonly import("./types.js").HsmAgentProfile<TContext>[];
 
   const seed = config.agents.seed ?? "auto";
 
@@ -46,10 +47,10 @@ export function defineHsmAgentSuite<TContext extends AnyRecord = AnyRecord>(
       origin,
       allowedOrigins
     },
-    agents: {
+      agents: {
       ...config.agents,
       seed,
-      profiles,
+      profiles: profilesTyped,
       mode: config.agents.mode ?? "simulation"
     }
   };

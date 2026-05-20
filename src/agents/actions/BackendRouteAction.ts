@@ -70,7 +70,7 @@ export class BackendRouteAction implements HsmAgentAction {
       });
       const result = await backend.resolveRequest({ method, url });
       ok = result.ok;
-      responseStatus = result.status;
+      responseStatus = result.ok ? 200 : (result as any).status;
     }
 
     context.lastBackendResult = {

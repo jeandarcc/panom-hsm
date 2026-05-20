@@ -25,10 +25,10 @@ export class LoaderAction implements HsmAgentAction {
     const findings: HsmAgentFinding[] = [];
 
     try {
-      const beforeState = context.snapshot?.stateId;
-      const result = await context.adapter.transition(target.id, { context: context.profile.context });
-      const snapshot = result.snapshot ?? result;
-      context.setSnapshot(snapshot);
+        const beforeState = context.snapshot?.stateId;
+        const result = await context.adapter.transition(target.id, { context: context.profile.context });
+        const snapshot = (result as any).snapshot ?? null;
+        context.setSnapshot(snapshot);
       return {
         ok: true,
         findings: [],
@@ -43,7 +43,7 @@ export class LoaderAction implements HsmAgentAction {
           actionType: this.category,
           input: { target: target.id },
           hsmStateBefore: beforeState,
-          hsmStateAfter: snapshot.stateId
+          hsmStateAfter: snapshot?.stateId
         }
       };
     } catch (error) {
