@@ -64,7 +64,11 @@ function createAgentContext() {
   const suite = defineHsmAgentSuite({
     name: "swarm",
     target: { origin: "http://localhost:3000" },
-    agents: { count: 1, durationMs: 1000, profiles: [agentProfiles.anonymous()] }
+    agents: {
+      count: 1,
+      durationMs: 1000,
+      profiles: [{ name: "anonymous", context: { user: null, auth: { role: "user" }, redirectTo: "" } }]
+    }
   });
   const adapter = createHsmAgentRuntimeAdapter(hsm);
   return new HsmAgentContext({
@@ -120,7 +124,11 @@ describe("hsm agent swarm", () => {
     const suite = defineHsmAgentSuite({
       name: "tamper",
       target: { origin: "http://localhost:3000" },
-      agents: { count: 1, durationMs: 1000, profiles: [agentProfiles.anonymous()] }
+      agents: {
+        count: 1,
+        durationMs: 1000,
+        profiles: [{ name: "anonymous", context: { user: null, auth: { role: "user" }, redirectTo: "" } }]
+      }
     });
     const context = new HsmAgentContext({
       agentId: "agent-1",

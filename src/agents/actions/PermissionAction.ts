@@ -29,6 +29,7 @@ export class PermissionAction implements HsmAgentAction {
       const beforeState = context.snapshot?.stateId;
       const result = await context.adapter.transition(target.id, { context: context.profile.context });
       const snapshot = result.snapshot ?? result;
+      context.setSnapshot(snapshot);
 
       const permissions = snapshot.policy?.permissions ?? [];
       if (context.profile.name === "lowPrivilege" || context.profile.name === "anonymous") {

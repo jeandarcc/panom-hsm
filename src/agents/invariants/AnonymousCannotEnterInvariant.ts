@@ -1,5 +1,5 @@
 import { wildcardMatch } from "../../testing/probes/ProbeUtils.js";
-import type { HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
+import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
 import type { HsmAgentContext } from "../HsmAgentContext.js";
 
 export class AnonymousCannotEnterInvariant implements HsmAgentInvariant {
@@ -10,7 +10,7 @@ export class AnonymousCannotEnterInvariant implements HsmAgentInvariant {
   public constructor(private readonly patterns: readonly string[]) {}
 
   public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
-    const findings = [] as any[];
+    const findings: HsmAgentFinding[] = [];
     const isAnonymous = context.profile.name === "anonymous" || context.profile.context?.user == null;
     const stateId = context.snapshot?.stateId;
     if (isAnonymous && stateId && this.patterns.some((pattern) => wildcardMatch(stateId, pattern))) {

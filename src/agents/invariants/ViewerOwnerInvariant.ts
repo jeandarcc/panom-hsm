@@ -1,4 +1,4 @@
-import type { HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
+import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
 import type { HsmAgentContext } from "../HsmAgentContext.js";
 
 export class ViewerOwnerInvariant implements HsmAgentInvariant {
@@ -7,7 +7,7 @@ export class ViewerOwnerInvariant implements HsmAgentInvariant {
   public readonly severity = "high" as const;
 
   public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
-    const findings = [] as any[];
+    const findings: HsmAgentFinding[] = [];
     if (!isViewerProfile(context.profile.name)) return { ok: true, findings };
 
     const permissions = context.snapshot?.policy?.permissions ?? [];

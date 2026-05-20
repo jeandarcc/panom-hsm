@@ -1,4 +1,4 @@
-import type { HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
+import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
 import type { HsmAgentContext } from "../HsmAgentContext.js";
 
 export class FrontendBackendPolicyInvariant implements HsmAgentInvariant {
@@ -7,7 +7,7 @@ export class FrontendBackendPolicyInvariant implements HsmAgentInvariant {
   public readonly severity = "high" as const;
 
   public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
-    const findings = [] as any[];
+    const findings: HsmAgentFinding[] = [];
     const backend = context.lastBackendResult as {
       ok?: boolean;
       stateId?: string;

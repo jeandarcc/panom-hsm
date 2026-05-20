@@ -39,6 +39,9 @@ interface ParsedAgentArgs {
   readonly browser?: boolean;
   readonly pauseOnFail?: boolean;
   readonly agentId?: string;
+  readonly trace?: boolean;
+  readonly screenshots?: boolean;
+  readonly video?: boolean;
 }
 
 export async function runAgentsCommand(options: AgentsCommandOptions): Promise<number> {
@@ -204,6 +207,15 @@ async function replayAgents(args: readonly string[], cwd: string): Promise<numbe
 
   const runner = new HsmAgentReplayRunner(hsm);
   try {
+    if (parsed.trace) {
+      const trace = await runner.extractTrace(reportPath, parsed.agentId);
+      if (!trace) {
+        console.error("Trace not found.");
+        return 1;
+      }
+      console.log(JSON.stringify(trace, null, 2));
+      return 0;
+    }
     const result = await runner.replay(reportPath, {
       agentId: parsed.agentId,
       browser: parsed.browser,
@@ -258,6 +270,9 @@ function parseAgentArgs(args: readonly string[]): ParsedAgentArgs {
     if (current === "--mode") { parsed.mode = next; index += 1; }
     if (current === "--browser") parsed.browser = true;
     if (current === "--pause-on-fail") parsed.pauseOnFail = true;
+    if (current === "--trace") parsed.trace = true;
+    if (current === "--screenshots") parsed.screenshots = true;
+    if (current === "--video") parsed.video = true;
     if (current === "--agent") { parsed.agentId = next; index += 1; }
   }
   return parsed as ParsedAgentArgs;
@@ -316,4 +331,7 @@ function printAgentsHelp(): void {
   console.log("  --agent <id>        Agent id for replay");
   console.log("  --browser           Browser replay (playwright)");
   console.log("  --pause-on-fail     Pause on failing steps");
+  console.log("  --trace             Print agent trace JSON");
+  console.log("  --screenshots       Capture screenshots (browser replay)");
+  console.log("  --video             Capture video (browser replay)");
 }

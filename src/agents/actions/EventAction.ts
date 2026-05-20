@@ -30,6 +30,7 @@ export class EventAction implements HsmAgentAction {
     const beforeState = context.snapshot?.stateId;
     const result = await context.adapter.send(event, {}, { context: context.profile.context });
     const snapshot = result.snapshot ?? result;
+    context.setSnapshot(snapshot);
 
     return {
       ok: true,

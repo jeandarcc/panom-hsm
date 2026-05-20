@@ -58,8 +58,8 @@ export class BackendRouteAction implements HsmAgentAction {
       if (context.safety.shouldBlockUrl(url)) {
         ok = false;
       } else {
-        const headers = context.safety.redactHeaders(context.account?.auth?.headers ? { ...context.account.auth.headers } : undefined);
-        const res = await fetch(requestUrl, { method, headers });
+        const rawHeaders = context.account?.auth?.headers ? { ...context.account.auth.headers } : undefined;
+        const res = await fetch(requestUrl, { method, headers: rawHeaders });
         responseStatus = res.status;
         ok = res.status < 400;
       }
@@ -107,7 +107,11 @@ export class BackendRouteAction implements HsmAgentAction {
         actionType: this.category,
         url,
         method,
-        request: { method, url },
+        request: {
+          method,
+          url,
+          headers: context.safety.redactHeaders(context.account?.auth?.headers ? { ...context.account.auth.headers } : undefined)
+        },
         response: { status: responseStatus },
         hsmStateBefore: context.snapshot?.stateId,
         hsmStateAfter: context.snapshot?.stateId,

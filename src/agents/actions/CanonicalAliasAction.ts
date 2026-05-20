@@ -29,6 +29,7 @@ export class CanonicalAliasAction implements HsmAgentAction {
         canonicalizeAliases: true,
         followRedirects: false
       });
+      context.setSnapshot(snapshot);
       const redirect = snapshot.redirect;
       if (!redirect && route.redirectToCanonical) {
         findings.push(context.toFinding({

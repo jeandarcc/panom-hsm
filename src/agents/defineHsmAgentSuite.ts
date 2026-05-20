@@ -39,6 +39,8 @@ export function defineHsmAgentSuite<TContext extends AnyRecord = AnyRecord>(
     ...config,
     kind: "hsm-agent-suite",
     safety,
+    actions: config.actions ?? [],
+    invariants: config.invariants ?? [],
     target: {
       ...config.target,
       origin,
