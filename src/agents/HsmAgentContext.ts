@@ -85,7 +85,7 @@ export class HsmAgentContext<TContext extends AnyRecord = AnyRecord> {
         anonymous: this.profile.context,
         agent: this.profile.context
       },
-      redirectSafety: createRedirectSafety()
+      redirectSafety: createRedirectSafety({ rootHostname: "localhost", currentOrigin: this.suite.target.origin })
     };
   }
 

@@ -5,7 +5,7 @@ export const AgentProfiles = {
   anonymous<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "anonymous",
-      context: {} as TContext,
+      context: {} as unknown as TContext,
       risk: "low",
       requiresAccount: false
     };
@@ -13,7 +13,7 @@ export const AgentProfiles = {
   user<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "user",
-      context: { user: { id: "user", role: "user" } } as TContext,
+      context: { user: { id: "user", role: "user" } } as unknown as TContext,
       risk: "medium",
       requiresAccount: true
     };
@@ -21,7 +21,7 @@ export const AgentProfiles = {
   owner<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "owner",
-      context: { user: { id: "owner", role: "owner" } } as TContext,
+      context: { user: { id: "owner", role: "owner" } } as unknown as TContext,
       risk: "medium",
       requiresAccount: true
     };
@@ -29,7 +29,7 @@ export const AgentProfiles = {
   lowPrivilege<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "lowPrivilege",
-      context: { user: { id: "viewer", role: "viewer" } } as TContext,
+      context: { user: { id: "viewer", role: "viewer" } } as unknown as TContext,
       risk: "low",
       requiresAccount: false
     };
@@ -37,7 +37,7 @@ export const AgentProfiles = {
   expiredSession<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "expiredSession",
-      context: { user: null, session: { expired: true } } as TContext,
+      context: { user: null, session: { expired: true } } as unknown as TContext,
       risk: "low",
       requiresAccount: false
     };
@@ -45,7 +45,7 @@ export const AgentProfiles = {
   quotaExceeded<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "quotaExceeded",
-      context: { user: { id: "user", role: "user" }, quota: { exceeded: true } } as TContext,
+      context: { user: { id: "user", role: "user" }, quota: { exceeded: true } } as unknown as TContext,
       risk: "medium",
       requiresAccount: true
     };
@@ -53,7 +53,7 @@ export const AgentProfiles = {
   admin<TContext extends AnyRecord = AnyRecord>(): HsmAgentProfile<TContext> {
     return {
       name: "admin",
-      context: { user: { id: "admin", role: "admin" } } as TContext,
+      context: { user: { id: "admin", role: "admin" } } as unknown as TContext,
       risk: "high",
       requiresAccount: true
     };

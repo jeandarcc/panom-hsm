@@ -10,9 +10,11 @@ export class HsmAgentTraceBuilder {
   }
 
   public attachFindings(eventId: string, findings: readonly HsmAgentFinding[]): void {
-    const event = this.events.find((item) => item.id === eventId);
-    if (event && findings.length > 0) {
-      (event as HsmAgentTraceEvent).findings = findings;
+    const idx = this.events.findIndex((item) => item.id === eventId);
+    if (idx !== -1 && findings.length > 0) {
+      const event = this.events[idx];
+      const newEvent = Object.freeze({ ...(event as any), findings }) as unknown as HsmAgentTraceEvent;
+      this.events[idx] = newEvent;
     }
   }
 

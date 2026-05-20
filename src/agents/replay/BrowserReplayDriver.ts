@@ -30,6 +30,8 @@ export class BrowserReplayDriver {
 
 async function loadPlaywright(): Promise<any> {
   try {
+    // Playwright is optional; avoid DTS/type errors when it's not installed.
+    // @ts-ignore - dynamic runtime import, types may be absent in dev environments
     return await import("playwright");
   } catch {
     throw new Error("Browser replay requires playwright. Install with: npm install -D playwright");
