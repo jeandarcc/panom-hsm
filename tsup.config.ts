@@ -11,6 +11,8 @@ export default defineConfig({
     "src/devtools/index.ts",
     "src/testing/index.ts",
     "src/audit/index.ts",
+    "src/agents/index.ts",
+    "src/agents/replay/index.ts",
     "src/cli/bin.ts"
   ],
   format: ["esm", "cjs"],

@@ -220,6 +220,94 @@ Debuggable explanations are available:
 const decision = await hsm.explainPermission("media.delete");
 ```
 
+## Agent Swarm
+
+Agent Swarm is a state-aware testing system that explores your app using the HSM schema, routes, queries, and policy metadata. It is deterministic, replayable, and integrates with the testing/audit findings model.
+
+Safety warning: run this only against your own local or staging targets. The default policy blocks unknown external origins and destructive actions.
+
+Quick start:
+
+```ts
+import {
+  defineHsmAgentSuite,
+  runHsmAgents,
+  agentProfiles,
+  agentActions,
+  agentInvariants
+} from "@panomapp/hsm/agents";
+
+const suite = defineHsmAgentSuite({
+  name: "security-swarm",
+  target: {
+    origin: "http://localhost:8080",
+    allowedOrigins: ["http://localhost:8080"]
+  },
+  hsm: {
+    schemaPath: "./hsm.schema.json"
+  },
+  agents: {
+    count: 20,
+    durationMs: 60_000,
+    seed: "0x91ac",
+    profiles: [
+      agentProfiles.anonymous(),
+      agentProfiles.user(),
+      agentProfiles.owner(),
+      agentProfiles.lowPrivilege()
+    ]
+  },
+  actions: [
+    agentActions.visitRoutes(),
+    agentActions.tamperQuery(),
+    agentActions.callBackendRoutes(),
+    agentActions.followCanonicalAliases(),
+    agentActions.tryPermissionBoundActions(),
+    agentActions.tryRedirectPayloads()
+  ],
+  invariants: [
+    agentInvariants.anonymousCannotEnter(["app.*", "cloud.*", "admin.*"]),
+    agentInvariants.queryCannotGrant(["admin", "role", "permissions", "plan"]),
+    agentInvariants.frontendBackendPolicyMustMatch(),
+    agentInvariants.unsafeRedirectsNeverAccepted(),
+    agentInvariants.viewerCannotGetOwnerPermissions()
+  ]
+});
+
+const report = await runHsmAgents({ hsm, suite });
+
+if (!report.ok) {
+  console.error(report.toText());
+  process.exit(1);
+}
+```
+
+CLI usage:
+
+```bash
+hsm agents run --schema hsm.schema.json --target http://localhost:8080
+hsm agents run --agents 50 --duration 5m --seed 0x91ac
+hsm agents run --json --report reports/hsm-agent-report.json
+
+hsm agents replay reports/hsm-agent-report.json --agent agent-12
+hsm agents replay reports/hsm-agent-report.json --agent agent-12 --browser --pause-on-fail
+```
+
+Deterministic runs:
+
+```bash
+hsm agents run --seed 0x91ac
+```
+
+Browser replay uses Playwright (optional):
+
+```bash
+npm install -D playwright
+hsm agents replay reports/hsm-agent-report.json --agent agent-12 --browser
+```
+
+Agent Swarm reuses the HSM Testing & Audit probes and findings model. It helps catch route/auth regressions and policy drift earlier, but it is not a replacement for full security testing.
+
 ## Schema and backend runtime
 
 HSM configs can be compiled into a function-free portable schema. The schema can be shared with backend code while guards/actions/loaders remain environment-specific registry entries.

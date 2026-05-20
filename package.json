@@ -59,6 +59,16 @@
       "import": "./dist/audit/index.js",
       "require": "./dist/audit/index.cjs"
     },
+    "./agents": {
+      "types": "./dist/agents/index.d.ts",
+      "import": "./dist/agents/index.js",
+      "require": "./dist/agents/index.cjs"
+    },
+    "./agents/replay": {
+      "types": "./dist/agents/replay/index.d.ts",
+      "import": "./dist/agents/replay/index.js",
+      "require": "./dist/agents/replay/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -72,7 +82,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/core/index.ts src/schema/index.ts src/backend/index.ts src/browser/index.ts src/vue/index.ts src/devtools/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts src/core/index.ts src/schema/index.ts src/backend/index.ts src/browser/index.ts src/vue/index.ts src/devtools/index.ts src/testing/index.ts src/audit/index.ts src/agents/index.ts src/agents/replay/index.ts src/cli/bin.ts --format esm,cjs --dts --clean",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepack": "npm run build",
@@ -132,6 +142,9 @@
   },
   "peerDependenciesMeta": {
     "vue": {
+      "optional": true
+    },
+    "playwright": {
       "optional": true
     }
   },

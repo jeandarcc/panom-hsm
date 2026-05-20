@@ -1,6 +1,7 @@
 import path from "node:path";
 import { runTestCommand } from "./commands/test.js";
 import { runAuditCommand } from "./commands/audit.js";
+import { runAgentsCommand } from "./commands/agents.js";
 
 export interface HsmCliOptions {
   readonly argv: readonly string[];
@@ -32,6 +33,10 @@ export class HsmCli {
       return runAuditCommand({ args: rest, cwd: this.cwd });
     }
 
+    if (command === "agents") {
+      return runAgentsCommand({ args: rest, cwd: this.cwd });
+    }
+
     console.error(`Unknown command: ${command}`);
     this.printHelp();
     return 1;
@@ -43,6 +48,7 @@ export class HsmCli {
     console.log("\nCommands:");
     console.log("  test           Run HSM tests");
     console.log("  audit          Run HSM security audit");
+    console.log("  agents         Run agent swarm commands");
     console.log("\nOptions:");
     console.log("  --config <path>   HSM config file");
     console.log("  --schema <path>   HSM schema file");

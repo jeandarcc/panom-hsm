@@ -13,6 +13,7 @@
 7. [07 Browser And Vue](./07-browser-and-vue.md)
 8. [08 Backend And Schema](./08-backend-and-schema.md)
 9. [09 Testing And Audit](./09-testing-and-audit.md)
+10. [10 Agent Swarm](./10-agent-swarm.md)
 
 ## What HSM Is
 
