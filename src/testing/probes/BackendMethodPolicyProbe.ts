@@ -74,6 +74,22 @@ export class BackendMethodPolicyProbe implements HsmSecurityProbe {
             url
           }));
         }
+
+        if (methods.includes(method) && result.ok && (state.policies?.permissions?.length ?? 0) > 0) {
+          findings.push(buildFinding({
+            id: `backend_method_policy:${state.id}:${method}:unauth`,
+            title: "Allowed backend method resolved without policy guard",
+            severity: "high",
+            category: "backend",
+            message: "Backend route resolved successfully with anonymous context despite permissions.",
+            recommendation: "Ensure backend guards and permissions enforce authentication.",
+            probeName: this.name,
+            stateId: state.id,
+            route: url,
+            url,
+            evidence: { permissions: state.policies?.permissions }
+          }));
+        }
       }
     }
 

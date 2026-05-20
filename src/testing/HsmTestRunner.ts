@@ -185,12 +185,12 @@ export class HsmTestRunner<TContext extends AnyRecord = AnyRecord> {
     return {
       hsm,
       hsmId: hsm.id,
-      resolveUrl: (url, options = {}) => hsm.resolveUrl(url, options as any),
-      transitionUrl: (url, options = {}) => hsm.transitionUrl(url, options as any),
-      transition: (stateId, options = {}) => hsm.transition(stateId, options as any),
-      send: (event, payload, options = {}) => hsm.send(event, payload, options as any),
-      href: (stateId, params = {}, options = {}) => hsm.href(stateId, params, options as any),
-      syncUrl: (url, context, options = {}) => hsm.syncUrl(url, context, options as any),
+      resolveUrl: (url, options = {}) => hsm.resolveUrl(url, options as AnyRecord),
+      transitionUrl: (url, options = {}) => hsm.transitionUrl(url, options as AnyRecord),
+      transition: (stateId, options = {}) => hsm.transition(stateId, options as AnyRecord),
+      send: (event, payload, options = {}) => hsm.send(event, payload, options as AnyRecord),
+      href: (stateId, params = {}, options = {}) => hsm.href(stateId, params, options as AnyRecord),
+      syncUrl: (url, context, options = {}) => hsm.syncUrl(url, context, options as AnyRecord),
       routes: () => hsm.routes(),
       states: () => hsm.states()
     };

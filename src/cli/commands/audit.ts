@@ -1,5 +1,6 @@
 import { runHsmAudit } from "../../testing/runHsmAudit.js";
 import { probes } from "../../testing/probes/index.js";
+import { TextReporter } from "../../testing/reporters/TextReporter.js";
 import { parseArgs, filterReport, severityRank, writeReport } from "../cliUtils.js";
 import { HsmTestDiscovery } from "../../testing/HsmTestDiscovery.js";
 import { loadHsm, loadSchema } from "../hsmLoader.js";
@@ -35,9 +36,9 @@ export async function runAuditCommand(options: AuditCommandOptions): Promise<num
   const report = await runHsmAudit({ hsm, schema: resolvedSchema, probes: auditProbes });
   const filtered = parsed.severity ? filterReport(report.toObject(), parsed.severity) : report.toObject();
 
-  const output = parsed.json ? JSON.stringify(filtered, null, 2) : report.toText();
+  const output = parsed.json ? JSON.stringify(filtered, null, 2) : new TextReporter().render(filtered);
   console.log(output);
-  await writeReport(parsed.json ? JSON.stringify(filtered, null, 2) : output, parsed.report);
+  await writeReport(output, parsed.report);
 
   const failOn = parsed.failOn ?? "high";
   const hasBlocking = filtered.findings.some((finding) => severityRank(finding.severity) >= severityRank(failOn));

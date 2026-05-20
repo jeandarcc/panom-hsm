@@ -21,12 +21,12 @@ export function parseArgs(args: readonly string[]): ParsedArgs {
     if (!current) continue;
     if (current === "--json") parsed.json = true;
     if (current === "--verbose") parsed.verbose = true;
-    if (current === "--config") parsed.config = next;
-    if (current === "--schema") parsed.schema = next;
-    if (current === "--tests") parsed.tests = next;
-    if (current === "--report") parsed.report = next;
-    if (current === "--severity") parsed.severity = next;
-    if (current === "--fail-on") parsed.failOn = next;
+    if (current === "--config") { parsed.config = next; index += 1; }
+    if (current === "--schema") { parsed.schema = next; index += 1; }
+    if (current === "--tests") { parsed.tests = next; index += 1; }
+    if (current === "--report") { parsed.report = next; index += 1; }
+    if (current === "--severity") { parsed.severity = next as ParsedArgs["severity"]; index += 1; }
+    if (current === "--fail-on") { parsed.failOn = next as ParsedArgs["failOn"]; index += 1; }
   }
   return parsed as ParsedArgs;
 }

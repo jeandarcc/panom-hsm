@@ -2,8 +2,6 @@ import type { HsmSchema } from "../../schema/HsmSchema.js";
 import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
 import { buildFinding, isDangerousPermission, severityForPermission } from "./ProbeUtils.js";
 
-const DANGEROUS_PERMISSION_HINTS = [".delete", ".write", ".update", ".admin", "billing.", "media.delete", "user.ban"];
-
 export class BackendPolicyMismatchProbe implements HsmSecurityProbe {
   public readonly name = "backend_policy_mismatch";
   public readonly description = "Detect missing backend enforcement for protected permissions.";
@@ -64,20 +62,6 @@ export class BackendPolicyMismatchProbe implements HsmSecurityProbe {
         }
       }
 
-      const policyTags = permissions.filter((perm) => DANGEROUS_PERMISSION_HINTS.some((hint) => perm.includes(hint)));
-      if (policyTags.length > 0 && !hasBackendPolicy) {
-        findings.push(buildFinding({
-          id: `backend_policy_mismatch:danger:${state.id}`,
-          title: "Potential backend policy drift",
-          severity: "high",
-          category: "backend",
-          message: "Destructive permissions detected without backend enforcement metadata.",
-          recommendation: "Confirm backend authorization matches frontend policy.",
-          probeName: this.name,
-          stateId: state.id,
-          evidence: { permissions }
-        }));
-      }
 
       const backendMethods = state.backend?.methods;
       if (backendMethods && backendMethods.length > 0 && permissions.length === 0) {

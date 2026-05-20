@@ -5,6 +5,7 @@ import type { HsmSecurityProbe } from "./types.js";
 import { HsmAuditRunner } from "./HsmAuditRunner.js";
 import { probes } from "./probes/index.js";
 import { inferProtectedStates } from "./HsmAuditDefaults.js";
+import type { HsmAuditReport } from "./HsmAuditReport.js";
 
 export interface RunHsmAuditOptions<TContext extends AnyRecord = AnyRecord> {
   readonly hsm: HsmMachine<TContext>;
@@ -16,7 +17,7 @@ export interface RunHsmAuditOptions<TContext extends AnyRecord = AnyRecord> {
 
 export async function runHsmAudit<TContext extends AnyRecord = AnyRecord>(
   options: RunHsmAuditOptions<TContext>
-) {
+): Promise<HsmAuditReport> {
   const defaultProbes = () => {
     const protectedStates = inferProtectedStates(options.hsm, options.schema);
     return probes.defaultAudit().map((probe) => {

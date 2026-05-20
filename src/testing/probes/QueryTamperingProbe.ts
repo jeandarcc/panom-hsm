@@ -45,7 +45,7 @@ export class QueryTamperingProbe implements HsmSecurityProbe {
       for (const payload of payloads) {
         const url = `${basePath}?${encodeURIComponent(binding.key ?? key)}=${encodeURIComponent(payload)}`;
         try {
-          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous });
+          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous ?? {} });
           const decoded = snapshot.urlState?.decoded?.[binding.key ?? key];
           if (decoded !== undefined && String(decoded) === payload) {
             findings.push(buildFinding({

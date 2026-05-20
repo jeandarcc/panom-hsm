@@ -3,6 +3,7 @@ import type { HsmMachine } from "../core/HsmMachine.js";
 import type { HsmSchema } from "../schema/HsmSchema.js";
 import type { HsmTest } from "./types.js";
 import { HsmTestRunner } from "./HsmTestRunner.js";
+import type { HsmTestReport } from "./HsmTestReport.js";
 
 export interface RunHsmTestsOptions<TContext extends AnyRecord = AnyRecord> {
   readonly hsm: HsmMachine<TContext>;
@@ -14,7 +15,7 @@ export interface RunHsmTestsOptions<TContext extends AnyRecord = AnyRecord> {
 
 export async function runHsmTests<TContext extends AnyRecord = AnyRecord>(
   options: RunHsmTestsOptions<TContext>
-) {
+): Promise<HsmTestReport> {
   const runner = new HsmTestRunner({
     hsm: options.hsm,
     schema: options.schema,

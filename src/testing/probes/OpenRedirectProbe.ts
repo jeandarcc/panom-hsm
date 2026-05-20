@@ -1,4 +1,3 @@
-import type { AnyRecord } from "../../core/types.js";
 import type { HsmSchema } from "../../schema/HsmSchema.js";
 import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
 import { buildFinding } from "./ProbeUtils.js";
@@ -48,7 +47,7 @@ export class OpenRedirectProbe implements HsmSecurityProbe {
       for (const payload of PAYLOADS) {
         const url = `${basePath}?${encodeURIComponent(key)}=${encodeURIComponent(payload)}`;
         try {
-          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous });
+          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous ?? {} });
           const accepted = snapshot.urlState?.decoded?.[key];
           if (!accepted) continue;
 
@@ -76,7 +75,7 @@ export class OpenRedirectProbe implements HsmSecurityProbe {
       for (const safe of SAFE_TARGETS) {
         const url = `${basePath}?${encodeURIComponent(key)}=${encodeURIComponent(safe)}`;
         try {
-          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous });
+          const snapshot = await context.adapter.resolveUrl(url, { context: context.contextProfiles.anonymous ?? {} });
           const accepted = snapshot.urlState?.decoded?.[key];
           const safety = context.redirectSafety?.validate(String(accepted));
           if (accepted && safety && !safety.ok) {

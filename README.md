@@ -347,6 +347,73 @@ devtools.inspect();
 
 The devtools runtime records transition starts, successes, failures, snapshots, and errors. It is framework-neutral and can be used in tests, internal debug panels, or browser integrations.
 
+## Testing & Audit
+
+HSM can run deterministic flow tests and security audits directly against the same routing, policy, and query-state contract your app uses at runtime.
+
+```ts
+import { defineHsmTest, runHsmTests, probes } from "@panomapp/hsm/testing";
+
+const loginFlow = defineHsmTest({
+  name: "login-flow",
+  arrange: {
+    context: { user: null }
+  },
+  steps: [
+    { type: "visit", url: "/login", expect: { state: "auth.login" } },
+    {
+      type: "event",
+      event: "LOGIN_SUCCESS",
+      payload: { user: { id: "u1", username: "yusuf" } },
+      expect: { state: "app.feed", permissions: ["post.create"] }
+    }
+  ],
+  security: [
+    probes.openRedirect(),
+    probes.unauthenticatedAccess({ protectedStates: ["app.*", "cloud.*"] }),
+    probes.queryTampering(),
+    probes.permissionEscalation(),
+    probes.backendPolicyMismatch()
+  ]
+});
+
+const report = await runHsmTests({ hsm, tests: [loginFlow] });
+
+if (!report.ok) {
+  console.error(report.toText());
+  process.exit(1);
+}
+```
+
+Security audits can run without custom tests by relying on schema-driven probes:
+
+```ts
+import { runHsmAudit } from "@panomapp/hsm/audit";
+
+const audit = await runHsmAudit({ hsm, schema });
+if (!audit.ok) console.error(audit.toText());
+```
+
+CLI usage:
+
+```bash
+hsm test
+hsm test login-flow
+hsm audit
+hsm audit --json --severity high --report hsm-audit.json
+```
+
+CI example:
+
+```bash
+npm run hsm:test
+npm run hsm:audit -- --fail-on high --json --report hsm-audit.json
+```
+
+Frontend policy remains UX. Backend policy enforcement is still the security boundary.
+HSM audit is not a replacement for full security testing, but it catches schema/runtime drift,
+guard omissions, unsafe redirects, and common route/auth mistakes early.
+
 ## Exports
 
 ```txt
@@ -358,6 +425,8 @@ The devtools runtime records transition starts, successes, failures, snapshots, 
 @panomapp/hsm/runtime
 @panomapp/hsm/vue
 @panomapp/hsm/devtools
+@panomapp/hsm/testing
+@panomapp/hsm/audit
 ```
 
 ## Security notes

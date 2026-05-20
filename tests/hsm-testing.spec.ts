@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { HsmMachine } from "../src/core/HsmMachine.js";
 import {
   compileSchema,
   createHsm,
@@ -65,6 +66,21 @@ function createTestHsm() {
       }
     }
   });
+}
+
+function createAdapter<TContext>(hsm: HsmMachine<TContext>) {
+  return {
+    hsm,
+    hsmId: hsm.id,
+    resolveUrl: (url: string, options?: Record<string, unknown>) => hsm.resolveUrl(url, options),
+    transitionUrl: (url: string, options?: Record<string, unknown>) => hsm.transitionUrl(url, options),
+    transition: (stateId: string, options?: Record<string, unknown>) => hsm.transition(stateId, options),
+    send: (event: string, payload: unknown, options?: Record<string, unknown>) => hsm.send(event, payload, options),
+    href: (stateId: string, params?: Record<string, unknown>, options?: Record<string, unknown>) => hsm.href(stateId, params, options),
+    syncUrl: (url: string, context: TContext, options?: Record<string, unknown>) => hsm.syncUrl(url, context, options),
+    routes: () => hsm.routes(),
+    states: () => hsm.states()
+  };
 }
 
 describe("hsm testing and audit", () => {
@@ -143,18 +159,7 @@ describe("hsm testing and audit", () => {
 
     const findings = await probes.unauthenticatedAccess({ protectedStates: ["cloud.*"] }).run({
       hsm: { id: hsm.id },
-      adapter: {
-        hsm,
-        hsmId: hsm.id,
-        resolveUrl: (url, options) => hsm.resolveUrl(url, options),
-        transitionUrl: (url, options) => hsm.transitionUrl(url, options),
-        transition: (stateId, options) => hsm.transition(stateId, options),
-        send: (event, payload, options) => hsm.send(event, payload, options),
-        href: (stateId, params, options) => hsm.href(stateId, params, options),
-        syncUrl: (url, context, options) => hsm.syncUrl(url, context, options),
-        routes: () => hsm.routes(),
-        states: () => hsm.states()
-      },
+      adapter: createAdapter(hsm),
       contextProfiles: { anonymous: {} },
       schema: undefined
     });
@@ -166,18 +171,7 @@ describe("hsm testing and audit", () => {
     const hsm = createTestHsm();
     const findings = await probes.permissionEscalation().run({
       hsm: { id: hsm.id },
-      adapter: {
-        hsm,
-        hsmId: hsm.id,
-        resolveUrl: (url, options) => hsm.resolveUrl(url, options),
-        transitionUrl: (url, options) => hsm.transitionUrl(url, options),
-        transition: (stateId, options) => hsm.transition(stateId, options),
-        send: (event, payload, options) => hsm.send(event, payload, options),
-        href: (stateId, params, options) => hsm.href(stateId, params, options),
-        syncUrl: (url, context, options) => hsm.syncUrl(url, context, options),
-        routes: () => hsm.routes(),
-        states: () => hsm.states()
-      },
+      adapter: createAdapter(hsm),
       contextProfiles: { anonymous: { user: null, auth: { role: "user" }, redirectTo: "" } },
       schema: undefined
     });
@@ -197,18 +191,7 @@ describe("hsm testing and audit", () => {
 
     const findings = await probes.queryTampering().run({
       hsm: { id: hsm.id },
-      adapter: {
-        hsm,
-        hsmId: hsm.id,
-        resolveUrl: (url, options) => hsm.resolveUrl(url, options),
-        transitionUrl: (url, options) => hsm.transitionUrl(url, options),
-        transition: (stateId, options) => hsm.transition(stateId, options),
-        send: (event, payload, options) => hsm.send(event, payload, options),
-        href: (stateId, params, options) => hsm.href(stateId, params, options),
-        syncUrl: (url, context, options) => hsm.syncUrl(url, context, options),
-        routes: () => hsm.routes(),
-        states: () => hsm.states()
-      },
+      adapter: createAdapter(hsm),
       contextProfiles: { anonymous: { profile: { page: 1 } } },
       schema
     });
@@ -228,18 +211,7 @@ describe("hsm testing and audit", () => {
 
     const findings = await probes.backendPolicyMismatch().run({
       hsm: { id: hsm.id },
-      adapter: {
-        hsm,
-        hsmId: hsm.id,
-        resolveUrl: (url, options) => hsm.resolveUrl(url, options),
-        transitionUrl: (url, options) => hsm.transitionUrl(url, options),
-        transition: (stateId, options) => hsm.transition(stateId, options),
-        send: (event, payload, options) => hsm.send(event, payload, options),
-        href: (stateId, params, options) => hsm.href(stateId, params, options),
-        syncUrl: (url, context, options) => hsm.syncUrl(url, context, options),
-        routes: () => hsm.routes(),
-        states: () => hsm.states()
-      },
+      adapter: createAdapter(hsm),
       contextProfiles: { anonymous: {} },
       schema
     });
@@ -251,18 +223,7 @@ describe("hsm testing and audit", () => {
     const hsm = createTestHsm();
     const findings = await probes.routeCanonicalization().run({
       hsm: { id: hsm.id },
-      adapter: {
-        hsm,
-        hsmId: hsm.id,
-        resolveUrl: (url, options) => hsm.resolveUrl(url, options),
-        transitionUrl: (url, options) => hsm.transitionUrl(url, options),
-        transition: (stateId, options) => hsm.transition(stateId, options),
-        send: (event, payload, options) => hsm.send(event, payload, options),
-        href: (stateId, params, options) => hsm.href(stateId, params, options),
-        syncUrl: (url, context, options) => hsm.syncUrl(url, context, options),
-        routes: () => hsm.routes(),
-        states: () => hsm.states()
-      },
+      adapter: createAdapter(hsm),
       contextProfiles: { anonymous: { user: null, auth: { role: "user" }, redirectTo: "" } },
       schema: undefined
     });
@@ -282,7 +243,7 @@ describe("hsm testing and audit", () => {
     const hsm = createTestHsm();
     const test = defineHsmTest({
       name: "report-text",
-      steps: [{ type: "visit", url: "/", expect: { state: "missing.state" } }]
+      steps: [{ type: "visit", url: "/", expect: { permissions: ["admin.panel"] } }]
     });
     const report = await runHsmTests({ hsm, tests: [test] });
     const text = new TextReporter().render(report.toObject());
