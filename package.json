@@ -49,7 +49,20 @@
       "import": "./dist/devtools/index.js",
       "require": "./dist/devtools/index.cjs"
     },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js",
+      "require": "./dist/testing/index.cjs"
+    },
+    "./audit": {
+      "types": "./dist/audit/index.d.ts",
+      "import": "./dist/audit/index.js",
+      "require": "./dist/audit/index.cjs"
+    },
     "./package.json": "./package.json"
+  },
+  "bin": {
+    "hsm": "./dist/cli/bin.js"
   },
   "files": [
     "dist",
@@ -109,7 +122,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@panomapp/subdomain-policy": "^0.1.0"
+    "@panomapp/subdomain-policy": "^0.1.0",
+    "fast-glob": "^3.3.2",
+    "jiti": "^2.4.2"
   },
   "peerDependencies": {
     "vue": "^3.4.0 || ^3.5.0"

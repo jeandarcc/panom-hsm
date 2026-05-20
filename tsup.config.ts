@@ -8,7 +8,10 @@ export default defineConfig({
     "src/backend/index.ts",
     "src/browser/index.ts",
     "src/vue/index.ts",
-    "src/devtools/index.ts"
+    "src/devtools/index.ts",
+    "src/testing/index.ts",
+    "src/audit/index.ts",
+    "src/cli/bin.ts"
   ],
   format: ["esm", "cjs"],
   dts: true,
