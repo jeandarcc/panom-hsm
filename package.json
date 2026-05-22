@@ -133,7 +133,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@panomapp/subdomain-policy": "^0.1.0",
+    "@panomapp/subdomain-policy": "file:../panom-subdomain",
     "fast-glob": "^3.3.2",
     "jiti": "^2.4.2"
   },
