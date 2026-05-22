@@ -118,4 +118,42 @@ describe("routing and href generation", () => {
 
     expect(() => hsm.matchUrl("/missing")).toThrow(HsmRouteNotFoundError);
   });
+
+  it("does not auto-expand route:false child states without required params", async () => {
+    const hsm = createHsm({
+      id: "panom-profile",
+      initial: "social",
+      context: {},
+      states: {
+        social: {
+          path: "/",
+          url: { hide: true },
+          states: {
+            profile: {
+              path: "/user/:id",
+              states: {
+                note: {
+                  path: "/note/:noteId",
+                  url: { route: false },
+                  states: {
+                    detail: { path: "/" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    await expect(hsm.resolveUrl("/user/alice")).resolves.toMatchObject({
+      stateId: "social.profile",
+      params: { id: "alice" }
+    });
+
+    await expect(hsm.resolveUrl("/user/alice/note/n1")).resolves.toMatchObject({
+      stateId: "social.profile.note.detail",
+      params: { id: "alice", noteId: "n1" }
+    });
+  });
 });

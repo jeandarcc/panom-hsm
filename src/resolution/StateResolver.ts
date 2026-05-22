@@ -93,12 +93,40 @@ export class StateResolver<TContext extends AnyRecord = AnyRecord> {
       }
 
       if (expandInitial && cursor.children.length === 1) {
-        cursor = cursor.children[0]!;
+        const onlyChild = cursor.children[0]!;
+        if (!this.shouldAutoExpandSingleChild(onlyChild, params)) {
+          return cursor;
+        }
+        cursor = onlyChild;
         continue;
       }
 
       return cursor;
     }
+  }
+
+  private shouldAutoExpandSingleChild(
+    child: StateNode<TContext>,
+    params: AnyRecord
+  ): boolean {
+    if (child.url?.route === false) {
+      const childPath = child.path ?? child.url?.path;
+      if (typeof childPath !== "string" || childPath.length === 0) {
+        return false;
+      }
+      return this.pathParamsSatisfied(childPath, params);
+    }
+    return true;
+  }
+
+  private pathParamsSatisfied(pathPattern: string, params: AnyRecord): boolean {
+    const normalized = pathPattern.startsWith("/") ? pathPattern : `/${pathPattern}`;
+    const paramNames = [...normalized.matchAll(/:([A-Za-z0-9_]+)/g)].map((match) => match[1]!);
+    if (paramNames.length === 0) return true;
+    return paramNames.every((name) => {
+      const value = params[name];
+      return value !== undefined && value !== null && String(value).length > 0;
+    });
   }
 
   private async selectChild(
