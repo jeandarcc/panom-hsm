@@ -8,13 +8,13 @@ import type { HsmTestReport } from "./HsmTestReport.js";
 
 export interface RunHsmTestsOptions<TContext extends AnyRecord = AnyRecord> {
   readonly hsm: HsmMachine<TContext>;
-  readonly tests: readonly HsmTest<TContext>[];
+  readonly tests: readonly HsmTest<any>[];
   readonly schema?: HsmSchema;
   readonly baseUrl?: string;
   readonly contextProfiles?: Readonly<Record<string, TContext>>;
 }
 
-export async function runHsmTests<TContext extends AnyRecord = AnyRecord>(
+export async function runHsmTests<TContext extends AnyRecord>(
   options: RunHsmTestsOptions<TContext>
 ): Promise<HsmTestReport> {
   const runner = new HsmTestRunner({

@@ -1,12 +1,12 @@
 import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 
 export class NoUnexpectedPermissionGainInvariant implements HsmAgentInvariant {
   public readonly name = "no_unexpected_permission_gain";
   public readonly description = "Permissions should not appear unexpectedly during an agent run.";
   public readonly severity = "medium" as const;
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult> {
     const findings: HsmAgentFinding[] = [];
     const permissions = context.snapshot?.policy?.permissions ?? [];
     const gained = permissions.filter((perm: string) => !context.baselinePermissions.includes(perm));

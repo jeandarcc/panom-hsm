@@ -3,6 +3,11 @@ import type { HsmFinding, HsmFindingSeverity } from "../types.js";
 
 export function wildcardMatch(input: string, pattern: string): boolean {
   if (pattern === "*") return true;
+  // HSM state patterns such as "cloud.*" mean the prefix state and all descendants.
+  if (pattern.endsWith(".*")) {
+    const prefix = pattern.slice(0, -2);
+    return input === prefix || input.startsWith(`${prefix}.`);
+  }
   const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
   return new RegExp(`^${escaped}$`).test(input);
 }

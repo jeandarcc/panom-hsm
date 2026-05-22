@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { AnyRecord } from "../src/core/types.js";
 import type { HsmMachine } from "../src/core/HsmMachine.js";
 import {
   compileSchema,
@@ -39,7 +40,7 @@ function createTestHsm() {
       }
     },
     states: {
-      landing: { path: "/" },
+      landing: { path: "/", permissions: ["admin.panel"] },
       auth: {
         path: "/login",
         states: {
@@ -68,7 +69,7 @@ function createTestHsm() {
   });
 }
 
-function createAdapter<TContext>(hsm: HsmMachine<TContext>) {
+function createAdapter<TContext extends AnyRecord>(hsm: HsmMachine<TContext>) {
   return {
     hsm,
     hsmId: hsm.id,
@@ -104,7 +105,7 @@ describe("hsm testing and audit", () => {
       ]
     });
 
-    const report = await runHsmTests({ hsm, tests: [test] });
+    const report = await runHsmTests<TestContext>({ hsm, tests: [test] });
     expect(report.ok).toBe(true);
   });
 
@@ -118,7 +119,7 @@ describe("hsm testing and audit", () => {
       ]
     });
 
-    const report = await runHsmTests({ hsm, tests: [test] });
+    const report = await runHsmTests<TestContext>({ hsm, tests: [test] });
     expect(report.ok).toBe(true);
   });
 
@@ -131,7 +132,7 @@ describe("hsm testing and audit", () => {
       ]
     });
 
-    const report = await runHsmTests({ hsm, tests: [test] });
+    const report = await runHsmTests<TestContext>({ hsm, tests: [test] });
     expect(report.ok).toBe(false);
     expect(report.findings[0]?.testName).toBe("assert-mismatch");
   });
@@ -234,7 +235,7 @@ describe("hsm testing and audit", () => {
   it("JSON reporter produces machine-readable output", async () => {
     const hsm = createTestHsm();
     const test = defineHsmTest({ name: "report", steps: [{ type: "visit", url: "/" }] });
-    const report = await runHsmTests({ hsm, tests: [test] });
+    const report = await runHsmTests<TestContext>({ hsm, tests: [test] });
     const json = new JsonReporter().render(report.toObject());
     expect(() => JSON.parse(json)).not.toThrow();
   });
@@ -245,7 +246,7 @@ describe("hsm testing and audit", () => {
       name: "report-text",
       steps: [{ type: "visit", url: "/", expect: { permissions: ["admin.panel"] } }]
     });
-    const report = await runHsmTests({ hsm, tests: [test] });
+    const report = await runHsmTests<TestContext>({ hsm, tests: [test] });
     const text = new TextReporter().render(report.toObject());
     expect(text).toContain("Severity:");
     expect(text).toContain("Recommendation");

@@ -1,6 +1,6 @@
 import type { HsmSchema, HsmSchemaStateNode } from "../../schema/HsmSchema.js";
 import type { HsmAgentAction, HsmAgentActionResult, HsmAgentFinding } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 import { createTraceEventId } from "./ActionUtils.js";
 
 export class LoaderAction implements HsmAgentAction {
@@ -9,11 +9,11 @@ export class LoaderAction implements HsmAgentAction {
   public readonly risk = "medium" as const;
   public readonly weight = 1;
 
-  public canRun(context: HsmAgentContext): boolean {
+  public canRun(context: HsmAgentContextRef): boolean {
     return Boolean(context.schema && findLoaderStates(context.schema).length > 0);
   }
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentActionResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentActionResult> {
     const schema = context.schema as HsmSchema | undefined;
     if (!schema) return { ok: true, findings: [] };
 

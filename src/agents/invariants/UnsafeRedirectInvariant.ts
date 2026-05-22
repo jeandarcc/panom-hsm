@@ -1,5 +1,5 @@
 import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 
 const REDIRECT_KEYS = ["redirect", "returnTo", "return_to", "next", "continue", "target", "to", "dest"];
 
@@ -8,7 +8,7 @@ export class UnsafeRedirectInvariant implements HsmAgentInvariant {
   public readonly description = "Unsafe redirects must never be accepted.";
   public readonly severity = "critical" as const;
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult> {
     const findings: HsmAgentFinding[] = [];
     const decoded = context.snapshot?.urlState?.decoded ?? {};
     for (const key of REDIRECT_KEYS) {

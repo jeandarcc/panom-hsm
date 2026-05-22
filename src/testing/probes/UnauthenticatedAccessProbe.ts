@@ -1,6 +1,6 @@
 import type { AnyRecord } from "../../core/types.js";
 import type { HsmSchema } from "../../schema/HsmSchema.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding, buildSamplePath, wildcardMatch } from "./ProbeUtils.js";
 
 export interface UnauthenticatedAccessProbeOptions<TContext extends AnyRecord = AnyRecord> {
@@ -16,7 +16,7 @@ export class UnauthenticatedAccessProbe implements HsmSecurityProbe {
 
   public constructor(private readonly options: UnauthenticatedAccessProbeOptions) {}
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const schema = context.schema as HsmSchema | undefined;
     const protectedStates = this.options.protectedStates;

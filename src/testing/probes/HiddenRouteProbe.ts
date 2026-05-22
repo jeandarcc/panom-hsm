@@ -1,6 +1,6 @@
 import type { AnyRecord } from "../../core/types.js";
 import { RouteProjection } from "../../routing/RouteProjection.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding } from "./ProbeUtils.js";
 
 export class HiddenRouteProbe implements HsmSecurityProbe {
@@ -8,7 +8,7 @@ export class HiddenRouteProbe implements HsmSecurityProbe {
   public readonly description = "Ensure hidden/virtual routes are not directly routable.";
   public readonly defaultSeverity = "medium" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const hsm = context.adapter.hsm as AnyRecord | undefined;
     if (!hsm?.tree) return findings;

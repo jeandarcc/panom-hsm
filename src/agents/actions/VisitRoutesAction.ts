@@ -1,6 +1,6 @@
 import type { AnyRecord } from "../../core/types.js";
 import type { HsmAgentAction, HsmAgentActionResult, HsmAgentFinding } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 import { createTraceEventId, samplePath } from "./ActionUtils.js";
 
 export class VisitRoutesAction implements HsmAgentAction {
@@ -9,11 +9,11 @@ export class VisitRoutesAction implements HsmAgentAction {
   public readonly risk = "low" as const;
   public readonly weight = 3;
 
-  public canRun(context: HsmAgentContext): boolean {
+  public canRun(context: HsmAgentContextRef): boolean {
     return context.adapter.routes().length > 0;
   }
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentActionResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentActionResult> {
     const routes = context.adapter.routes() as readonly AnyRecord[];
     const route = context.random.pick(routes);
     const url = samplePath(route);

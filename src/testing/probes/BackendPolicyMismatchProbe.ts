@@ -1,5 +1,5 @@
 import type { HsmSchema } from "../../schema/HsmSchema.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding, isDangerousPermission, severityForPermission } from "./ProbeUtils.js";
 
 export class BackendPolicyMismatchProbe implements HsmSecurityProbe {
@@ -7,7 +7,7 @@ export class BackendPolicyMismatchProbe implements HsmSecurityProbe {
   public readonly description = "Detect missing backend enforcement for protected permissions.";
   public readonly defaultSeverity = "high" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const schema = context.schema as HsmSchema | undefined;
     if (!schema) {
       return [

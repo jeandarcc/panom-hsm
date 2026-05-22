@@ -1,12 +1,12 @@
 import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 
 export class ViewerOwnerInvariant implements HsmAgentInvariant {
   public readonly name = "viewer_owner_permissions";
   public readonly description = "Viewer profiles must not gain owner/admin permissions.";
   public readonly severity = "high" as const;
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult> {
     const findings: HsmAgentFinding[] = [];
     if (!isViewerProfile(context.profile.name)) return { ok: true, findings };
 

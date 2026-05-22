@@ -1,5 +1,5 @@
 import type { AnyRecord } from "../../core/types.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding, isDangerousPermission } from "./ProbeUtils.js";
 
 const SUSPICIOUS_QUERIES: ReadonlyArray<[string, string]> = [
@@ -17,11 +17,16 @@ export class PermissionEscalationProbe implements HsmSecurityProbe {
   public readonly description = "Detect permission/capability changes caused by query tampering.";
   public readonly defaultSeverity = "high" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const baseContext = context.contextProfiles.anonymous ?? ({} as AnyRecord);
-    const route = context.adapter.routes()[0] as AnyRecord | undefined;
-    const basePath = route?.canonicalPattern ?? route?.pattern ?? "/";
+    const routes = context.adapter.routes() as readonly AnyRecord[];
+    const canonicalRoutes = routes.filter((route) => !route.isAlias);
+    const rootRoute = canonicalRoutes.find(
+      (route) => route.pattern === "/" || route.canonicalPattern === "/"
+    );
+    const baseRoute = rootRoute ?? canonicalRoutes[0] ?? routes[0];
+    const basePath = baseRoute?.canonicalPattern ?? baseRoute?.pattern ?? "/";
 
     let baselinePermissions: readonly string[] = [];
     let baselineFeatures: readonly string[] = [];

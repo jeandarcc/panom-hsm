@@ -1,5 +1,5 @@
 import type { HsmSchema } from "../../schema/HsmSchema.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding } from "./ProbeUtils.js";
 
 const REDIRECT_KEYS = ["redirect", "returnTo", "return_to", "next", "continue", "target", "to", "dest"];
@@ -31,7 +31,7 @@ export class OpenRedirectProbe implements HsmSecurityProbe {
 
   public constructor(private readonly options: OpenRedirectProbeOptions = {}) {}
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const keys = this.options.keys ?? REDIRECT_KEYS;
     const schema = context.schema as HsmSchema | undefined;

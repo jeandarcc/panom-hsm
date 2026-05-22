@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { AnyRecord } from "../core/types.js";
+import type { AnyRecord, HsmMachineConfig } from "../core/types.js";
 import type { HsmMachine } from "../core/HsmMachine.js";
 import type { HsmSchema } from "../schema/HsmSchema.js";
 import { createHsm } from "../core/createHsm.js";
@@ -17,7 +17,7 @@ export async function loadSchema(schemaPath: string): Promise<HsmSchema> {
   const resolved = path.resolve(process.cwd(), schemaPath);
   if (resolved.endsWith(".json")) {
     const raw = await fs.readFile(resolved, "utf-8");
-    return schemaFromJson(JSON.parse(raw));
+    return schemaFromJson(raw);
   }
   const loader = new HsmTestFileLoader({ cwd: process.cwd() });
   const mod = await loader.loadConfig(resolved);
@@ -40,7 +40,7 @@ export async function loadHsm<TContext extends AnyRecord = AnyRecord>(
   }
 
   if (config?.states) {
-    return { hsm: createHsm(config), schema };
+    return { hsm: createHsm(config as HsmMachineConfig<TContext>), schema };
   }
 
   throw new Error("Unable to resolve HSM configuration. Export an HSM instance or machine config.");

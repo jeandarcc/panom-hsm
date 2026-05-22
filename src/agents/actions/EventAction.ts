@@ -1,6 +1,6 @@
 import type { AnyRecord } from "../../core/types.js";
 import type { HsmAgentAction, HsmAgentActionResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 import { createTraceEventId } from "./ActionUtils.js";
 
 export class EventAction implements HsmAgentAction {
@@ -9,12 +9,12 @@ export class EventAction implements HsmAgentAction {
   public readonly risk = "medium" as const;
   public readonly weight = 1;
 
-  public canRun(context: HsmAgentContext): boolean {
+  public canRun(context: HsmAgentContextRef): boolean {
     const hsm = context.adapter.hsm as AnyRecord | undefined;
     return Boolean(hsm?.tree?.all?.some((node: AnyRecord) => node.config?.on));
   }
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentActionResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentActionResult> {
     const hsm = context.adapter.hsm as AnyRecord | undefined;
     const eventNames = new Set<string>();
     for (const node of hsm?.tree?.all ?? []) {

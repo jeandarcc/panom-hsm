@@ -11,9 +11,9 @@ import { HsmAgentSafetyPolicy } from "./HsmAgentSafetyPolicy.js";
 import { createHsmAgentRuntimeAdapter } from "./HsmAgentRuntimeAdapter.js";
 
 export class HsmAgentSwarm<TContext extends AnyRecord = AnyRecord> {
-  private readonly adapter = createHsmAgentRuntimeAdapter(this.hsm);
-  private readonly safety = new HsmAgentSafetyPolicy(this.suite.safety);
-  private readonly accountManager = new HsmAgentAccountManager(this.suite.accounts);
+  private readonly adapter: ReturnType<typeof createHsmAgentRuntimeAdapter<TContext>>;
+  private readonly safety: HsmAgentSafetyPolicy;
+  private readonly accountManager: HsmAgentAccountManager;
 
   public constructor(
     private readonly hsm: HsmMachine<TContext>,
@@ -21,7 +21,11 @@ export class HsmAgentSwarm<TContext extends AnyRecord = AnyRecord> {
     private readonly schema: HsmSchema | undefined,
     private readonly actions: readonly HsmAgentAction[],
     private readonly invariants: readonly HsmAgentInvariant[]
-  ) {}
+  ) {
+    this.adapter = createHsmAgentRuntimeAdapter(this.hsm);
+    this.safety = new HsmAgentSafetyPolicy(this.suite.safety);
+    this.accountManager = new HsmAgentAccountManager(this.suite.accounts);
+  }
 
   public async run(): Promise<readonly HsmAgentRunResult[]> {
     const random = new HsmAgentRandom(this.suite.agents.seed ?? "auto");

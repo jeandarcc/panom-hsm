@@ -14,6 +14,7 @@ import { ReplayTraceLoader } from "../../agents/replay/ReplayTraceLoader.js";
 import { HsmAgentDiscovery } from "../../agents/HsmAgentDiscovery.js";
 import { HsmAgentFileLoader } from "../../agents/HsmAgentFileLoader.js";
 import type { HsmAgentReportData } from "../../agents/types.js";
+import type { HsmFindingSeverity } from "../../testing/types.js";
 import { filterBySeverity, severityRank, writeReport } from "../cliUtils.js";
 
 interface AgentsCommandOptions {
@@ -32,8 +33,8 @@ interface ParsedAgentArgs {
   readonly profile?: string;
   readonly json?: boolean;
   readonly report?: string;
-  readonly severity?: string;
-  readonly failOn?: string;
+  readonly severity?: HsmFindingSeverity;
+  readonly failOn?: HsmFindingSeverity;
   readonly allowProductionTarget?: boolean;
   readonly mode?: string;
   readonly browser?: boolean;
@@ -264,8 +265,8 @@ function parseAgentArgs(args: readonly string[]): ParsedAgentArgs {
     if (current === "--profile") { parsed.profile = next; index += 1; }
     if (current === "--json") parsed.json = true;
     if (current === "--report") { parsed.report = next; index += 1; }
-    if (current === "--severity") { parsed.severity = next; index += 1; }
-    if (current === "--fail-on") { parsed.failOn = next; index += 1; }
+    if (current === "--severity") { parsed.severity = next as HsmFindingSeverity; index += 1; }
+    if (current === "--fail-on") { parsed.failOn = next as HsmFindingSeverity; index += 1; }
     if (current === "--allow-production-target") parsed.allowProductionTarget = true;
     if (current === "--mode") { parsed.mode = next; index += 1; }
     if (current === "--browser") parsed.browser = true;
@@ -291,8 +292,8 @@ function parseDuration(input?: string): number | undefined {
   return undefined;
 }
 
-function filterAgentReport(report: HsmAgentReportData, min: string): HsmAgentReportData {
-  const findings = filterBySeverity(report.findings, min as any);
+function filterAgentReport(report: HsmAgentReportData, min: HsmFindingSeverity): HsmAgentReportData {
+  const findings = filterBySeverity(report.findings, min);
   return {
     ...report,
     findings,

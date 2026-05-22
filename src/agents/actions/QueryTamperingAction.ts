@@ -1,5 +1,5 @@
 import type { HsmAgentAction, HsmAgentActionResult, HsmAgentFinding } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 import { createTraceEventId } from "./ActionUtils.js";
 import { probes } from "../../testing/probes/index.js";
 
@@ -9,11 +9,11 @@ export class QueryTamperingAction implements HsmAgentAction {
   public readonly risk = "medium" as const;
   public readonly weight = 1;
 
-  public canRun(context: HsmAgentContext): boolean {
+  public canRun(context: HsmAgentContextRef): boolean {
     return Boolean(context.schema?.query);
   }
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentActionResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentActionResult> {
     if (context.flags.get(this.name)) {
       return { ok: true, findings: [] };
     }

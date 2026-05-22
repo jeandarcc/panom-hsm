@@ -92,6 +92,11 @@ export class StateResolver<TContext extends AnyRecord = AnyRecord> {
         continue;
       }
 
+      if (expandInitial && cursor.children.length === 1) {
+        cursor = cursor.children[0]!;
+        continue;
+      }
+
       return cursor;
     }
   }

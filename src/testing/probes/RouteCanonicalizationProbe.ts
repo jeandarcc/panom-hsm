@@ -1,5 +1,5 @@
 import type { AnyRecord } from "../../core/types.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding, buildSamplePath } from "./ProbeUtils.js";
 
 export class RouteCanonicalizationProbe implements HsmSecurityProbe {
@@ -7,7 +7,7 @@ export class RouteCanonicalizationProbe implements HsmSecurityProbe {
   public readonly description = "Verify aliases and canonical routes resolve consistently.";
   public readonly defaultSeverity = "medium" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const routes = context.adapter.routes() as readonly AnyRecord[];
 
@@ -17,7 +17,6 @@ export class RouteCanonicalizationProbe implements HsmSecurityProbe {
       try {
         const snapshot = await context.adapter.resolveUrl(aliasPath, {
           context: context.contextProfiles.anonymous,
-          canonicalizeAliases: true,
           followRedirects: false
         });
         const redirect = snapshot.redirect;

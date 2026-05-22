@@ -92,13 +92,16 @@ export interface HsmAgentActionResult {
   readonly transition?: HsmTransitionResult<AnyRecord> | null;
 }
 
+/** Agent actions operate on the runtime context; `any` avoids HSM guard variance issues. */
+export type HsmAgentContextRef = HsmAgentContext<any>;
+
 export interface HsmAgentAction {
   readonly name: string;
   readonly category: string;
   readonly risk: HsmAgentRisk;
   readonly weight: number;
-  canRun(context: HsmAgentContext): boolean;
-  run(context: HsmAgentContext): Promise<HsmAgentActionResult>;
+  canRun(context: HsmAgentContextRef): boolean;
+  run(context: HsmAgentContextRef): Promise<HsmAgentActionResult>;
 }
 
 export interface HsmAgentInvariantResult {
@@ -110,7 +113,7 @@ export interface HsmAgentInvariant {
   readonly name: string;
   readonly description: string;
   readonly severity: HsmFindingSeverity;
-  run(context: HsmAgentContext): Promise<HsmAgentInvariantResult>;
+  run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult>;
 }
 
 export interface HsmAgentTraceEvent {

@@ -1,6 +1,6 @@
 import type { AnyRecord, HsmQueryType } from "../../core/types.js";
 import type { HsmSchema } from "../../schema/HsmSchema.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding } from "./ProbeUtils.js";
 
 const INVALID_PAYLOADS: Record<HsmQueryType, readonly string[]> = {
@@ -18,7 +18,7 @@ export class QueryTamperingProbe implements HsmSecurityProbe {
   public readonly description = "Audit query schema robustness against malformed inputs.";
   public readonly defaultSeverity = "medium" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const findings: HsmFinding[] = [];
     const schema = context.schema as HsmSchema | undefined;
     if (!schema?.query || Object.keys(schema.query).length === 0) {

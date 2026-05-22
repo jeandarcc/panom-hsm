@@ -1,4 +1,3 @@
-import path from "node:path";
 import fg from "fast-glob";
 
 export interface HsmAgentDiscoveryOptions {
@@ -18,6 +17,6 @@ export class HsmAgentDiscovery {
     ];
     const cwd = this.options.cwd ?? process.cwd();
     const matches = await fg(patterns, { cwd, absolute: true });
-    return matches.length > 0 ? path.resolve(matches[0]) : null;
+    return matches.length > 0 ? matches[0]! : null;
   }
 }

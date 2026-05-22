@@ -47,7 +47,20 @@ function createTestHsm() {
       }
     },
     states: {
-      landing: { path: "/" },
+      landing: { path: "/", permissions: ["admin.panel"] },
+      auth: {
+        path: "/login",
+        states: {
+          login: {
+            on: {
+              LOGIN_SUCCESS: {
+                target: "app.feed",
+                context: { user: { id: "u1", role: "user" } }
+              }
+            }
+          }
+        }
+      },
       app: {
         path: "/app",
         guard: "requiresAuth",
@@ -74,7 +87,7 @@ function createAgentContext() {
   return new HsmAgentContext({
     agentId: "agent-1",
     suite,
-    profile: suite.agents.profiles[0],
+    profile: suite.agents.profiles[0]!,
     adapter,
     random: new HsmAgentRandom("seed"),
     safety: new HsmAgentSafetyPolicy(suite.safety),
@@ -133,7 +146,7 @@ describe("hsm agent swarm", () => {
     const context = new HsmAgentContext({
       agentId: "agent-1",
       suite,
-      profile: suite.agents.profiles[0],
+      profile: suite.agents.profiles[0]!,
       adapter: createHsmAgentRuntimeAdapter(hsm),
       random: new HsmAgentRandom("seed"),
       safety: new HsmAgentSafetyPolicy(suite.safety),
@@ -143,7 +156,7 @@ describe("hsm agent swarm", () => {
         query: { role: query.string("user", { source: "auth.role" }) },
         policies: { permissions: { "admin.panel": "isAdmin" } },
         guards: { isAdmin: ({ context }) => context.auth.role === "admin" },
-        states: { landing: { path: "/" } }
+        states: { landing: { path: "/", permissions: ["admin.panel"] } }
       }), { generatedAt: false })
     });
     const result = await tamperQuery().run(context);
@@ -244,11 +257,27 @@ describe("hsm agent swarm", () => {
       seed: "seed",
       durationMs: 10,
       agents: { total: 1, completed: 1, failed: 0 },
-      steps: { total: 0 },
+      steps: { total: 1 },
       findings: [],
       findingsBySeverity: { info: [], low: [], medium: [], high: [], critical: [] },
       agentSummaries: [],
-      traces: [],
+      traces: [
+        {
+          agentId: "agent-1",
+          seed: "seed",
+          events: [
+            {
+              id: "agent-1:0:visit",
+              agentId: "agent-1",
+              sequence: 0,
+              timestamp: new Date().toISOString(),
+              actionName: "visit_routes",
+              actionType: "routing",
+              url: "/"
+            }
+          ]
+        }
+      ],
       reproduction: [],
       metadata: { generatedAt: new Date().toISOString(), environment: {} }
     });

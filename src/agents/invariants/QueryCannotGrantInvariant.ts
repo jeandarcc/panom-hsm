@@ -1,5 +1,5 @@
 import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 
 export class QueryCannotGrantInvariant implements HsmAgentInvariant {
   public readonly name = "query_cannot_grant";
@@ -8,7 +8,7 @@ export class QueryCannotGrantInvariant implements HsmAgentInvariant {
 
   public constructor(private readonly keys: readonly string[]) {}
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult> {
     const findings: HsmAgentFinding[] = [];
     const decoded = context.snapshot?.urlState?.decoded ?? {};
     const touched = this.keys.some((key) => key in decoded);

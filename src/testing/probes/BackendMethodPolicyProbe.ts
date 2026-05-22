@@ -1,7 +1,7 @@
 import type { AnyRecord } from "../../core/types.js";
 import type { HsmSchema } from "../../schema/HsmSchema.js";
 import { createHsmBackend } from "../../backend/HsmBackendRuntime.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding, buildSamplePath } from "./ProbeUtils.js";
 
 const COMMON_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
@@ -11,7 +11,7 @@ export class BackendMethodPolicyProbe implements HsmSecurityProbe {
   public readonly description = "Validate backend method restrictions against the schema.";
   public readonly defaultSeverity = "high" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const schema = context.schema as HsmSchema | undefined;
     if (!schema) {
       return [

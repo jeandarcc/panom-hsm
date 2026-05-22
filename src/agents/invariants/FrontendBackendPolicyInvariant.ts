@@ -1,12 +1,12 @@
 import type { HsmAgentFinding, HsmAgentInvariant, HsmAgentInvariantResult } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 
 export class FrontendBackendPolicyInvariant implements HsmAgentInvariant {
   public readonly name = "frontend_backend_policy";
   public readonly description = "Frontend policy should align with backend enforcement.";
   public readonly severity = "high" as const;
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentInvariantResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentInvariantResult> {
     const findings: HsmAgentFinding[] = [];
     const backend = context.lastBackendResult as {
       ok?: boolean;

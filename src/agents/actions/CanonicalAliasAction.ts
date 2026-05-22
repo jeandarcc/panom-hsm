@@ -1,6 +1,6 @@
 import type { AnyRecord } from "../../core/types.js";
 import type { HsmAgentAction, HsmAgentActionResult, HsmAgentFinding } from "../types.js";
-import type { HsmAgentContext } from "../HsmAgentContext.js";
+import type { HsmAgentContextRef } from "../types.js";
 import { createTraceEventId, samplePath } from "./ActionUtils.js";
 
 export class CanonicalAliasAction implements HsmAgentAction {
@@ -9,11 +9,11 @@ export class CanonicalAliasAction implements HsmAgentAction {
   public readonly risk = "medium" as const;
   public readonly weight = 1;
 
-  public canRun(context: HsmAgentContext): boolean {
+  public canRun(context: HsmAgentContextRef): boolean {
     return context.adapter.routes().some((route: AnyRecord) => route.isAlias);
   }
 
-  public async run(context: HsmAgentContext): Promise<HsmAgentActionResult> {
+  public async run(context: HsmAgentContextRef): Promise<HsmAgentActionResult> {
     const routes = context.adapter.routes().filter((route: AnyRecord) => route.isAlias);
     if (routes.length === 0) return { ok: true, findings: [] };
 

@@ -1,5 +1,5 @@
 import type { HsmSchema } from "../../schema/HsmSchema.js";
-import type { HsmFinding, HsmProbeContext, HsmSecurityProbe } from "../types.js";
+import type { HsmFinding, HsmProbeContextRef, HsmSecurityProbe } from "../types.js";
 import { buildFinding } from "./ProbeUtils.js";
 
 export class QuerySchemaProbe implements HsmSecurityProbe {
@@ -7,7 +7,7 @@ export class QuerySchemaProbe implements HsmSecurityProbe {
   public readonly description = "Validate query schema structure and defaults.";
   public readonly defaultSeverity = "low" as const;
 
-  public async run(context: HsmProbeContext): Promise<readonly HsmFinding[]> {
+  public async run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]> {
     const schema = context.schema as HsmSchema | undefined;
     if (!schema?.query) {
       return [

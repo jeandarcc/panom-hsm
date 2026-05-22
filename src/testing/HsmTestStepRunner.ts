@@ -105,7 +105,7 @@ export class HsmTestStepRunner<TContext extends AnyRecord = AnyRecord> {
   private finishStep(
     context: HsmTestContext<TContext>,
     options: StepRunnerOptions<TContext>,
-    expect: HsmTestStep<TContext> extends { expect?: infer T } ? T : never,
+    expect: HsmTestExpectation | undefined,
     transition: HsmTestStepResult<TContext>["transition"]
   ): HsmTestStepResult<TContext> {
     const snapshot = context.currentSnapshot;

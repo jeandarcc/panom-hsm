@@ -175,6 +175,9 @@ export interface HsmProbeContext<TContext extends AnyRecord = AnyRecord> {
   readonly baseUrl?: string;
 }
 
+/** Security probes operate on the runtime context; `any` avoids HSM guard variance issues. */
+export type HsmProbeContextRef = HsmProbeContext<any>;
+
 export interface HsmRuntimeAdapter<TContext extends AnyRecord = AnyRecord> {
   readonly hsm: unknown;
   readonly hsmId: string;
@@ -192,7 +195,7 @@ export interface HsmSecurityProbe {
   readonly name: string;
   readonly description: string;
   readonly defaultSeverity: HsmFindingSeverity;
-  run(context: HsmProbeContext): Promise<readonly HsmFinding[]>;
+  run(context: HsmProbeContextRef): Promise<readonly HsmFinding[]>;
 }
 
 export interface RedirectSafetyAdapter {
